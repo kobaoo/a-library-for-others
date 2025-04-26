@@ -3,6 +3,7 @@ package csvparser
 import (
 	"errors"
 	"io"
+	"strings"
 )
 
 type CSVParser interface  {
@@ -22,6 +23,22 @@ var (
     ErrQuote      = errors.New("excess or missing \" in quoted-field")
     ErrFieldCount = errors.New("wrong number of fields")
 )
+
+func (c *CSVParserData) GetNumberOfFields() int {
+	return len(c.fields)
+}
+
+func (c *CSVParserData) GetField(idx int) (string, error) {
+	if len(c.fields) <= idx || idx < 0{
+		return "", ErrFieldCount
+	}
+	field := strings.TrimSpace(c.fields[idx])
+	if len(field) > 1 && field[0] == '"' && field[len(field)-1] == '"' {
+		field = field[1:len(field)-1]
+	}
+
+	return field, nil
+}
 
 func (c *CSVParserData) ReadLine(r io.Reader) (string, error) {
 	var buffer []byte

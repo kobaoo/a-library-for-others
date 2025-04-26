@@ -23,6 +23,7 @@ Bob O'Conner,40,Chicago
 	defer file.Close()
 
 	csvParser := csvparser.CSVParserData{}
+	idx := 0
 	for {
 		line, err := csvParser.ReadLine(file)
 		if err != nil {
@@ -32,7 +33,17 @@ Bob O'Conner,40,Chicago
 			fmt.Println("Error reading line:", err)
 			os.Exit(1)
 		}
-        fmt.Println(line)
+        fmt.Println("Line", idx, ":", line)
+		idx++
+		numberOfFields := csvParser.GetNumberOfFields()
+		for i := 0; i < numberOfFields; i++ {
+			field, err := csvParser.GetField(i)
+			if err != nil {
+				fmt.Println(err)
+				break
+			}
+			fmt.Println("    Field", i+1, ":", field)
+		}
 	}
 }
 
